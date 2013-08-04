@@ -19,6 +19,7 @@ Instructions:
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
 #include <vector>
 
@@ -102,7 +103,7 @@ int Program::Print() {
         printf("r%d = input", inst.target);
         break;
       case Instruction::Return:
-        printf("return %d = input", inst.op1);
+        printf("return r%d", inst.op1);
         break;
       case Instruction::Binary:
         printf("r%d = binary-", inst.target);
@@ -116,7 +117,7 @@ int Program::Print() {
         printf(" r%d, r%d", inst.op1, inst.op2);
         break;
       case Instruction::Const:
-        printf("r%d  %d", inst.target, inst.op1);
+        printf("r%d = const %d", inst.target, inst.op1);
         break;
       default:
         printf("invalid type\n");
@@ -163,5 +164,15 @@ void Program::GenerateFuzz() {
         printf("invalid type\n");
     }
   }
+}
+
+//
+
+int main() {
+  srand(time(NULL));
+  Program p;
+  p.GenerateFuzz();
+  p.Print();
+  return 0;
 }
 
