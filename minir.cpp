@@ -58,25 +58,25 @@ int Program::Execute(int input) {
   for (int i = 0; i < instructions.size(); i++) {
     Instruction &inst = instructions[i];
     switch (inst.type) {
-      case Instruction::Type::Input:
+      case Instruction::Input:
         state.EnsureReg(inst.target);
         state.regs[inst.target] = input;
         break;
-      case Instruction::Type::Return:
+      case Instruction::Return:
         state.EnsureReg(inst.target);
         return state.regs[inst.op1];
-      case Instruction::Type::Binary:
+      case Instruction::Binary:
         state.EnsureReg(inst.op1);
         state.EnsureReg(inst.op2);
         state.EnsureReg(inst.target);
         switch (inst.subType) {
-          case Instruction::SubType::Add:
+          case Instruction::Add:
             state.regs[inst.target] = state.regs[inst.op1] + state.regs[inst.op2];
           default:
             printf("invalid subtype\n");
         }
         break;
-      case Instruction::Type::Const:
+      case Instruction::Const:
         state.EnsureReg(inst.target);
         state.regs[inst.target] = inst.op1;
         break;
