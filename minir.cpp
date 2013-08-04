@@ -79,6 +79,7 @@ int Program::Execute(int input) {
         switch (inst.subType) {
           case Instruction::Add:
             state.regs[inst.target] = state.regs[inst.op1] + state.regs[inst.op2];
+            break;
           default:
             printf("invalid subtype\n");
         }
@@ -128,9 +129,9 @@ int Program::Print() {
 }
 
 void Program::GenerateFuzz() {
-  int numInstructions = rand() % 100;
+  int numInstructions = (rand() % 30)+1;
   instructions.resize(numInstructions);
-  int numRegs = rand() % 10;
+  int numRegs = (rand() % 10)+1;
   for (int i = 0; i < numInstructions; i++) {
     Instruction &inst = instructions[i];
     switch (rand() % 4) {
@@ -173,6 +174,8 @@ int main() {
   Program p;
   p.GenerateFuzz();
   p.Print();
+  printf("----\n");
+  printf("Execution result on input 100: %d\n", p.Execute(100));
   return 0;
 }
 
