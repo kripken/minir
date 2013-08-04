@@ -44,6 +44,8 @@ struct Program {
 
   int Execute(int input);
 
+  int Print();
+
   void GenerateFuzz();
 };
 
@@ -87,6 +89,39 @@ int Program::Execute(int input) {
       default:
         printf("invalid type\n");
     }
+  }
+  return 0;
+}
+
+int Program::Print() {
+  for (int i = 0; i < instructions.size(); i++) {
+    printf("(%3d)  ", i);
+    Instruction &inst = instructions[i];
+    switch (inst.type) {
+      case Instruction::Input:
+        printf("r%d = input", inst.target);
+        break;
+      case Instruction::Return:
+        printf("return %d = input", inst.op1);
+        break;
+      case Instruction::Binary:
+        printf("r%d = binary-", inst.target);
+        switch (inst.subType) {
+          case Instruction::Add:
+            printf("add");
+            break;
+          default:
+            printf("invalid subtype\n");
+        }
+        printf(" r%d, r%d", inst.op1, inst.op2);
+        break;
+      case Instruction::Const:
+        printf("r%d  %d", inst.target, inst.op1);
+        break;
+      default:
+        printf("invalid type\n");
+    }
+    printf("\n");
   }
   return 0;
 }
