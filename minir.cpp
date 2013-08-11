@@ -13,7 +13,7 @@ Instructions:
     * Add +
   * Const(i32 value) returns value
   * Input() returns value from input stream
-  * Return(reg value) halts and defines program output
+  * Output(reg value) sets program output
 
 */
 
@@ -26,7 +26,7 @@ Instructions:
 struct Instruction {
   enum Type {
     Input,
-    Return,
+    Output,
     Binary,
     Const
   };
@@ -62,6 +62,8 @@ int Program::Execute(int input) {
     }
   } state;
 
+  int ret = 0;
+
   for (int i = 0; i < instructions.size(); i++) {
     Instruction &inst = instructions[i];
     switch (inst.type) {
@@ -69,9 +71,10 @@ int Program::Execute(int input) {
         state.EnsureReg(inst.target);
         state.regs[inst.target] = input;
         break;
-      case Instruction::Return:
+      case Instruction::Output:
         state.EnsureReg(inst.op1);
-        return state.regs[inst.op1];
+        ret = state.regs[inst.op1];
+        break;
       case Instruction::Binary:
         state.EnsureReg(inst.op1);
         state.EnsureReg(inst.op2);
@@ -92,7 +95,7 @@ int Program::Execute(int input) {
         printf("invalid type\n");
     }
   }
-  return 0;
+  return ret;
 }
 
 int Program::Print() {
@@ -103,8 +106,8 @@ int Program::Print() {
       case Instruction::Input:
         printf("r%d = input", inst.target);
         break;
-      case Instruction::Return:
-        printf("return r%d", inst.op1);
+      case Instruction::Output:
+        printf("output r%d", inst.op1);
         break;
       case Instruction::Binary:
         printf("r%d = binary-", inst.target);
@@ -129,7 +132,7 @@ int Program::Print() {
 }
 
 void Program::GenerateFuzz() {
-  int numInstructions = (rand() % 20)+1;
+  int numInstructions = 10;//(rand() % 10)+5;
   instructions.resize(numInstructions);
   int numRegs = (rand() % 4)+1;
   for (int i = 0; i < numInstructions; i++) {
@@ -140,7 +143,7 @@ void Program::GenerateFuzz() {
         inst.target = rand() % numRegs;
         break;
       case 1:
-        inst.type = Instruction::Return;
+        inst.type = Instruction::Output;
         inst.op1 = rand() % numRegs;
         break;
       case 2:
