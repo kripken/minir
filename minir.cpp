@@ -129,9 +129,9 @@ int Program::Print() {
 }
 
 void Program::GenerateFuzz() {
-  int numInstructions = (rand() % 30)+1;
+  int numInstructions = (rand() % 20)+1;
   instructions.resize(numInstructions);
-  int numRegs = (rand() % 10)+1;
+  int numRegs = (rand() % 4)+1;
   for (int i = 0; i < numInstructions; i++) {
     Instruction &inst = instructions[i];
     switch (rand() % 4) {
@@ -171,11 +171,19 @@ void Program::GenerateFuzz() {
 
 int main() {
   srand(time(NULL));
-  Program p;
-  p.GenerateFuzz();
-  p.Print();
-  printf("----\n");
-  printf("Execution result on input 100: %d\n", p.Execute(100));
+  int t = 0;
+  int nonZero = 0;
+  while (1) {
+    Program p;
+    p.GenerateFuzz();
+    //p.Print();
+    //printf("----\n");
+    int result = p.Execute(100);
+    if (result) nonZero++;
+    t++;
+    printf("%d Execution result on input 100: %10d, non-zero so far: %d (%3.3f%%)\n", t, result, nonZero, float(100*nonZero)/t);
+    //printf("\n");
+  }
   return 0;
 }
 
